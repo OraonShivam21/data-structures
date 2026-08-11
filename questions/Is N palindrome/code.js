@@ -6,20 +6,44 @@
 
 const fs = require("fs");
 
-const input = fs.readFileSync(0, "utf8").trim().split(/\s+/);
-let original = parseInt(input[0]);
-let number = original;
-let reversed = 0;
+const input = fs.readFileSync(0, "utf8").trim().split(/\s+/).map(Number);
+let first = input[0];
+let second = input[1];
 
-if (number < 0) number = -number;
+// brute force approach
+let smallest = first > second ? first : second;
 
-while (number > 0) {
-  let lastDigit = number % 10;
-  reversed = reversed * 10 + lastDigit;
-
-  number = parseInt(number / 10);
+let gcd = 1;
+for (let i = 2; i < smallest; i++) {
+  if (first % i === 0 && second % i === 0) gcd = i;
 }
 
-const result = original < 0 ? -original : original === reversed;
-console.log(result);
-console.log("The number:", original, result ? "is" : "isn't", "a palindrome");
+console.log("The GCD of", first, "and", second, "is:", gcd);
+
+// optimized approach
+
+// 1. using recursion
+function gcd(first, second) {
+  if (first === 0) return second;
+  if (second === 0) return first;
+
+  if (first > second) return gcd(first - second, second);
+  else return gcd(second - first, first);
+}
+
+// 2. using modulo
+function gcd(first, second) {
+  while (first > 0 && second > 0) {
+    if (first > second) {
+      first = first % second;
+    } else {
+      second = second % first;
+    }
+  }
+
+  if (first === 0) return second;
+
+  return first;
+}
+
+console.log("The GCD of", first, "and", second, "is:", gcd(first, second));
